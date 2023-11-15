@@ -1,18 +1,19 @@
+ // Add your Mapbox access token
  mapboxgl.accessToken = 'pk.eyJ1IjoibWtlbmRhbGw5MyIsImEiOiJjajh1ZnBza3gweWx0MndwNnhqdm4xNWxqIn0.rMuyyrv9yUHGnE0PiXzGLw';
  const map = new mapboxgl.Map({
    container: 'map', // Specify the container ID
    style: 'mapbox://styles/mapbox/streets-v12', // Specify which map style to use
-   center: [-77.0369,38.895], // Specify the starting position
+   center: [-79.9959, 40.4406], // Specify the starting position
    zoom: 11.5, // Specify the starting zoom
  });
 
 
 // Create constants to use in getIso()
 const urlBase = 'https://api.mapbox.com/isochrone/v1/mapbox/';
-const lon = -77.034;
-const lat = 38.899;
-const profile = 'cycling'; // Set the default routing profile
-const minutes = 10; // Set the default duration
+const lon = -79.9959;
+const lat = 40.4406;
+let profile = 'cycling'; // Set the default routing profile
+let minutes = 10; // Set the default duration
 
 // Create a function that sets up the Isochrone API query then makes an fetch call
 async function getIso() {
@@ -21,10 +22,9 @@ async function getIso() {
     { method: 'GET' }
   );
   const data = await query.json();
-    // Set the 'iso' source's data to what's returned by the API query
-    map.getSource('iso').setData(data);
+  // Set the 'iso' source's data to what's returned by the API query
+map.getSource('iso').setData(data);
 }
-
 map.on('load', () => {
     // When the map loads, add the source and layer
     map.addSource('iso', {
@@ -54,3 +54,16 @@ map.on('load', () => {
     // Make the API call
     getIso();
   });
+
+  // Target the "params" form in the HTML portion of your code
+const params = document.getElementById('params');
+
+// When a user changes the value of profile or duration by clicking a button, change the parameter's value and make the API query again
+params.addEventListener('change', (event) => {
+  if (event.target.name === 'profile') {
+    profile = event.target.value;
+  } else if (event.target.name === 'duration') {
+    minutes = event.target.value;
+  }
+  getIso();
+});
