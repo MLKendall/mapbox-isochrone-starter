@@ -4,7 +4,7 @@
    container: 'map', // Specify the container ID
    style: 'mapbox://styles/mapbox/streets-v12', // Specify which map style to use
    center: [-79.9959, 40.4406], // Specify the starting position
-   zoom: 11.5, // Specify the starting zoom
+   zoom: 9, // Specify the starting zoom
  });
 
 
@@ -12,8 +12,8 @@
 const urlBase = 'https://api.mapbox.com/isochrone/v1/mapbox/';
 const lon = -79.9959;
 const lat = 40.4406;
-let profile = 'cycling'; // Set the default routing profile
-let minutes = 10; // Set the default duration
+let profile = 'driving'; // Set the default routing profile
+let minutes = 60; // Set the default duration
 
 // Create a function that sets up the Isochrone API query then makes an fetch call
 async function getIso() {
@@ -25,6 +25,18 @@ async function getIso() {
   // Set the 'iso' source's data to what's returned by the API query
 map.getSource('iso').setData(data);
 }
+
+const marker = new mapboxgl.Marker({
+  color: '#314ccd'
+});
+
+// Create a LngLat object to use in the marker initialization
+// https://docs.mapbox.com/mapbox-gl-js/api/#lnglat
+const lngLat = {
+  lon: lon,
+  lat: lat
+};
+
 map.on('load', () => {
     // When the map loads, add the source and layer
     map.addSource('iso', {
@@ -51,6 +63,9 @@ map.on('load', () => {
       'poi-label'
     );
   
+    marker.setLngLat(lngLat).addTo(map);
+
+
     // Make the API call
     getIso();
   });
